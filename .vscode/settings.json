@@ -1,0 +1,16 @@
+{
+    "python.pythonPath": "C:\\Users\\Finbar\\AppData\\Local\\Programs\\Python\\Python36-32\\python.exe",
+    "python.analysis.disabled": [
+        "inherit-non-class"
+    ],
+    "python.testing.pytestArgs": [
+        "src"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.formatting.provider": "autopep8",
+    "python.linting.pylintEnabled": false,
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true
+}
