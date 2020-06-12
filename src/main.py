@@ -41,18 +41,6 @@ class BaseAPI(MethodView):
         # update a single state
         pass
 
-# with open('./Saved Files/srd_5e_monsters.json') as f:
-#     monsters = json.load(f)
-
-# monster_list = []
-
-# for i, m in enumerate(monsters):
-#     m['id'] = i + 1
-#     monster_list.append(SetProperties(m))
-
-# with open('Saved Files/monster.json', 'w') as json_file:
-#     json.dump(monster_list, json_file)
-
 
 app = Flask(__name__)
 CORS(app)
@@ -106,8 +94,36 @@ api.add_resource(Employees, '/employees')  # Route_1
 
 # app.add_url_rule('/beamEnds/', view_func=endCond_view, methods=['GET', ])
 
+
+def readJsonFile(filename):
+    try:
+        with open('Saved Files/{}.json'.format(filename), 'r') as json_file:
+            return json.load(json_file)
+    except FileNotFoundError:
+        return 'Sorry, but {}.json doesn\'t exist'.format(filename)
+    except Exception as ex:
+        template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+        message = template.format(type(ex).__name__, ex.args)
+        return message
+
+
+s = [readJsonFile('test'), readJsonFile('test2'), readJsonFile('test3')]
 # # api.add_resource(ThermoState, '/allstates') # Route_2
 
 if __name__ == '__main__':
     print('Loading Backend...')
+    [print(x) for x in s]
     app.run(port=5002)
+
+
+# with open('./Saved Files/srd_5e_monsters.json') as f:
+#     monsters = json.load(f)
+
+# monster_list = []
+
+# for i, m in enumerate(monsters):
+#     m['id'] = i + 1
+#     monster_list.append(SetProperties(m))
+
+# with open('Saved Files/monster.json', 'w') as json_file:
+#     json.dump(monster_list, json_file)
