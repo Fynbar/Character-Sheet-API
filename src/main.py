@@ -3,35 +3,39 @@ from flask import Flask, request, make_response
 from flask.json import jsonify
 from flask_restful import Resource, Api
 from flask_cors import CORS
+
 # , Api
 from flask.views import MethodView
+
 # , cross_origin
 # from flask.json import jsonify
 # from flask.views import View, MethodView
 # from pprint import pprint
 from json_save.json_save import SaveJSONAPI
+from dice.dice import DiceRoller
+
 # from beam_bending.beam_bending import BeamAPI, BeamEndCondAPI
 # , ThermoState
+
 
 
 class BaseAPI(MethodView):
     def get(self):
         # print(state_id)
-        return json.dumps({'text': 'Hello World!'})
+        return json.dumps({"text": "Hello World!"})
 
     def post(self):
         print(request.is_json)
-
         if request.is_json:
             req_data = request.get_json()
-            with open('Saved Files/test.json', 'w') as json_file:
+            with open("Saved Files/test.json", "w") as json_file:
                 print(req_data)
-                print(req_data['name'])
+                print(req_data["name"])
                 print(jsonify(req_data))
                 json.dump(req_data, json_file)
             return make_response(jsonify(req_data))
         else:
-            return make_response(jsonify({'response': 'Error non-json type'}))
+            return make_response(jsonify({"response": "Error non-json type"}))
 
     def delete(self):
         # delete a single state
@@ -51,25 +55,30 @@ api = Api(app)
 # def hello():
 #     return json.dumps({'text': 'Hello World!'})
 
-base_view = BaseAPI.as_view('base_api')
+base_view = BaseAPI.as_view("base_api")
 
-app.add_url_rule('/', view_func=base_view,
-                 methods=['GET', 'PUT', 'POST', 'DELETE'])
+app.add_url_rule("/", view_func=base_view, methods=["GET", "PUT", "POST", "DELETE"])
 
 
-json_view = SaveJSONAPI.as_view('json_api')
+json_view = SaveJSONAPI.as_view("json_api")
 
-app.add_url_rule('/saveJSON', view_func=json_view,
-                 methods=['GET', 'PUT', 'POST', 'DELETE'])
+app.add_url_rule(
+    "/saveJSON", view_func=json_view, methods=["GET", "PUT", "POST", "DELETE"]
+)
 
 
 class Employees(Resource):
     def get(self):
-        return {'employees': [{'id': 1, 'name': 'Balram'},
-                              {'id': 2, 'name': 'Tom'}]}
+        return {"employees": [{"id": 1, "name": "Balram"}, {"id": 2, "name": "Tom"}]}
 
 
-api.add_resource(Employees, '/employees')  # Route_1
+api.add_resource(Employees, "/employees")  # Route_1
+
+
+
+dice_view = DiceRoller.as_view("dice_view")
+
+app.add_url_rule("/diceHistory", view_func=dice_view, methods=["POST", "GET"])
 
 # Thermodynamic States
 # state_view = StateAPI.as_view('state_api')
@@ -97,21 +106,21 @@ api.add_resource(Employees, '/employees')  # Route_1
 
 def readJsonFile(filename):
     try:
-        with open('Saved Files/{}.json'.format(filename), 'r') as json_file:
+        with open("Saved Files/{}.json".format(filename), "r") as json_file:
             return json.load(json_file)
     except FileNotFoundError:
-        return 'Sorry, but {}.json doesn\'t exist'.format(filename)
+        return "Sorry, but {}.json doesn't exist".format(filename)
     except Exception as ex:
         template = "An exception of type {0} occurred. Arguments:\n{1!r}"
         message = template.format(type(ex).__name__, ex.args)
         return message
 
 
-s = [readJsonFile('test'), readJsonFile('test2'), readJsonFile('test3')]
+s = [readJsonFile("test"), readJsonFile("test2"), readJsonFile("test3")]
 # # api.add_resource(ThermoState, '/allstates') # Route_2
-
-if __name__ == '__main__':
-    print('Loading Backend...')
+print("lwmon")
+if __name__ == "__main__":
+    print("Loading Backend...")
     [print(x) for x in s]
     app.run(port=5002)
 
