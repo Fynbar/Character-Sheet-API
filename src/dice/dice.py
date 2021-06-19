@@ -22,7 +22,7 @@ class Dice(object):
 
     def rolls(self):
         self.results = [self.roll() for _ in range(self.dice["diceNum"])]
-        self.results.sort()
+        # self.results.sort()
         self.total = (
             sum(
                 self.results[self.range[0] : -1 * self.range[1]]
