@@ -1,28 +1,28 @@
 {
-    "sources": [{
-        "json": "MergedPlanesHomebrew",
-        "abbreviation": "MPHB",
-        "full": "Merged Planes Homebrew",
-        "version": "0.1",
-        "url": "https://www.youtube.com/watch?v=yPYZpwSpKmA",
-        "authors": [
-            "CajunLeprechaun"
-        ],
-        "convertedBy": [
-            "CajunLeprechaun"
-        ],
-        "color": "BD7044"
-    }],
-    "dateAdded": 1579601514,
-    "dateLastModified": 1616041483,
-    "internalCopies": [
-        "item"
-    ],
+    "meta": {
+        "sources": [{
+            "json": "MergedPlanesHomebrew",
+            "abbreviation": "MPHB",
+            "full": "Merged Planes Homebrew",
+            "version": "0.1",
+            "url": "https://www.youtube.com/watch?v=yPYZpwSpKmA",
+            "authors": [
+                "CajunLeprechaun"
+            ],
+            "convertedBy": [
+                "CajunLeprechaun"
+            ],
+            "color": "BD7044"
+        }],
+        "dateAdded": 1579601514,
+        "dateLastModified": 1616041483,
+        "internalCopies": [
+            "item"
+        ]
+    },
     "item": [{
-        "name": "Robe of the Archmagi",
-        "source": "DMG",
-        "page": 194,
-        "srd": true,
+        "name": "Robe of the Stranger",
+        "source": "MPHB",
         "tier": "major",
         "rarity": "legendary",
         "reqAttune": "by a sorcerer, warlock, or wizard",
@@ -50,10 +50,6 @@
                     "Your spell save DC and spell attack bonus each increase by 2."
                 ]
             }
-        ],
-        "lootTables": [
-            "Magic Item Table I"
-        ],
-        "hasFluffImages": true
+        ]
     }]
 }
