@@ -139,9 +139,9 @@ class stringDie:
                 # print('Sub Dice', sd)
                 self.subdice = [stringDie(die) for die in sd]
                 self.diequant = len(sd)
-
+    
     def buildBase(self, s):
-        s = s.replace(" ", "")
+        s = s.replace(" ", "").lower()
         self.string = s
         self.diequant = 0
         self.dienum = 1

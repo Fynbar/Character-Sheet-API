@@ -37,3 +37,18 @@ class SaveJSONAPI(MethodView):
     def put(self):
         # update a single state
         pass
+
+    def jsonWrite(name, data):
+        # req_data = request.get_json()
+        filemane = 'Saved Files/{}.json'.format(name)
+        with open(filemane, 'w') as json_file:
+            # print(req_data)
+            # print(req_data['name'])
+            # print(jsonify(req_data))
+            json.dump(data, json_file)
+    def jsonRead(name):
+        # req_data = request.get_json()
+        filename = 'Saved Files/{}.json'.format(name)
+        with open(filename, 'r', encoding='utf-8') as json_file:
+            data = json.load(json_file)
+        return data

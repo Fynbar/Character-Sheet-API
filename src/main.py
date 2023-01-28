@@ -81,8 +81,8 @@ app.add_url_rule("/diceHistory", view_func=dice_view, methods=["POST", "GET"])
 
 diestring_view = StringRoller.as_view("diestring_view")
 
-app.add_url_rule("/dice", view_func=diestring_view, methods=["POST", "GET"])
-app.add_url_rule("/dice/<dieString>", view_func=diestring_view, methods=["POST", "GET"])
+app.add_url_rule("/dice", view_func=diestring_view, methods=["POST", "GET","OPTIONS"])
+app.add_url_rule("/dice/<id>", view_func=diestring_view, methods=["POST", "GET","OPTIONS"])
 
 def readJsonFile(filename):
     try:
