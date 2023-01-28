@@ -12,10 +12,9 @@ from flask.views import MethodView
 # from flask.views import View, MethodView
 # from pprint import pprint
 from json_save.json_save import SaveJSONAPI
-from dice.dice import DiceRoller
+from dice.dice import DiceRoller, StringRoller
+from dice.stringDie import stringDie
 
-# from beam_bending.beam_bending import BeamAPI, BeamEndCondAPI
-# , ThermoState
 
 
 
@@ -67,12 +66,12 @@ app.add_url_rule(
 )
 
 
-class Employees(Resource):
-    def get(self):
-        return {"employees": [{"id": 1, "name": "Balram"}, {"id": 2, "name": "Tom"}]}
+# class Employees(Resource):
+#     def get(self):
+#         return {"employees": [{"id": 1, "name": "Balram"}, {"id": 2, "name": "Tom"}]}
 
 
-api.add_resource(Employees, "/employees")  # Route_1
+# api.add_resource(Employees, "/employees")  # Route_1
 
 
 
@@ -80,29 +79,10 @@ dice_view = DiceRoller.as_view("dice_view")
 
 app.add_url_rule("/diceHistory", view_func=dice_view, methods=["POST", "GET"])
 
-# Thermodynamic States
-# state_view = StateAPI.as_view('state_api')
-# app.add_url_rule('/states/', defaults={'state_id': None},
-#                  view_func=state_view, methods=['GET', ])
-# app.add_url_rule('/states/', view_func=state_view, methods=['POST', ])
-# app.add_url_rule('/states/<int:state_id>', view_func=state_view,
-#                  methods=['GET', 'PUT', 'DELETE'])
-# # Api to get the max and min saturation temp
-# limit_view = StateLimitAPI.as_view('limit_api')
-# app.add_url_rule('/stateLimits/', defaults={'material': None},
-#                  view_func=limit_view, methods=['GET', ])
+diestring_view = StringRoller.as_view("diestring_view")
 
-# # Beam Bending
-# bending_view = BeamAPI.as_view('bending_api')
-
-# app.add_url_rule('/bendings/', view_func=bending_view, methods=['POST', ])
-# app.add_url_rule('/bendings/<int:bending_id>', view_func=bending_view,
-#                  methods=['GET', 'PUT', 'DELETE'])
-# # Api to get the types of end conditions
-# endCond_view = BeamEndCondAPI.as_view('endCond_api')
-
-# app.add_url_rule('/beamEnds/', view_func=endCond_view, methods=['GET', ])
-
+app.add_url_rule("/dice", view_func=diestring_view, methods=["POST", "GET"])
+app.add_url_rule("/dice/<dieString>", view_func=diestring_view, methods=["POST", "GET"])
 
 def readJsonFile(filename):
     try:
@@ -117,7 +97,6 @@ def readJsonFile(filename):
 
 
 s = [readJsonFile("test"), readJsonFile("test2"), readJsonFile("test3")]
-# # api.add_resource(ThermoState, '/allstates') # Route_2
 print("lwmon")
 if __name__ == "__main__":
     print("Loading Backend...")

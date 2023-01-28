@@ -16,7 +16,7 @@ class SaveJSONAPI(MethodView):
         return json.dumps({'text': 'Hello World!'})
 
     def post(self):
-        print(request.is_json)
+        print("Post Attempt:",request.is_json)
 
         if request.is_json:
             req_data = request.get_json()

@@ -8,6 +8,7 @@ from flask.json import jsonify
 import random
 # from flask_restful import Resource
 # , Api
+from dice.stringDie import stringDie
 
 class Dice(object):
     def __init__(self, dice, reroll=[], highest=0, lowest=0):
@@ -57,3 +58,25 @@ class DiceRoller(MethodView):
         global_history.history.append(d)
         return jsonify(d)
 
+class StringRoller(MethodView):
+    def get(self, dieString=""):
+        # req_data = request.get_json()
+        print(dieString)
+        if dieString != "":
+            s = stringDie(dieString)
+            s.total()
+            id = len(global_history.history)+1
+            d = {'die':s.toDict(), 'id':id}    
+            global_history.history.append(d)
+            return jsonify(d)
+        else:
+            return jsonify(global_history.history)
+
+    def post(self):
+        # console.log()
+        req_data = request.get_json()
+        print(req_data)
+        id = len(global_history.history)+1
+        d = {'die':stringDie(req_data['string']), 'id':id}
+        global_history.history.append(d)
+        return jsonify(d)
