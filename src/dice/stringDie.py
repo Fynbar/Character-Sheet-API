@@ -1,4 +1,8 @@
 import random
+# Toggle Testing
+testing = True
+testing = False
+
 # Lambda Functions
 isIn = lambda a, *args: all([arg in a for arg in args])
 anyIsIn = lambda a, *args: any([arg in a for arg in args])
@@ -21,6 +25,13 @@ class stringDie:
         if isinstance(s, stringDie):
             self.copyFromDie(s)
         # check for constants
+        elif isinstance(s, dict):
+
+            s = self.buildBase('+')
+            for k in list(dict.keys()):
+                self.__setattr__(k, s[k])
+        elif isinstance(s, int):
+            s = self.buildBase(str(s))
         elif s.isnumeric():
             s = self.buildBase(s)
             self.diequant = int(s)
@@ -33,7 +44,7 @@ class stringDie:
             signs=["+"]
             ind_md = [0]
             ind_inequ = [0]
-            ind_as=[0]
+            ind_as = [0]
             n=0
             obr = "{("
             cbr = "})"
@@ -139,7 +150,8 @@ class stringDie:
                 # print('Sub Dice', sd)
                 self.subdice = [stringDie(die) for die in sd]
                 self.diequant = len(sd)
-    
+
+
     def buildBase(self, s):
         s = s.replace(" ", "").lower()
         self.string = s
@@ -268,8 +280,6 @@ class stringDie:
             return self.value == self.dienum
 
     def rerollSubdice(self, *index, ignoreRerolled=True, offset = 0):
-        print(index)
-        print("Rerolling", index, ignoreRerolled, len(self.subdice), offset)
         for i in index:
             self.subdice.append(stringDie(self.subdice[i+offset]))
             self.subdice[-1].total()
@@ -284,42 +294,7 @@ class stringDie:
             # Reroll
             if "r" in self.ignoreCond:
                 print('Rerolling')
-                once = self.ignoreCond[1] == 'o'
-                equal = '=' in self.ignoreCond
-                # Check for greater or less than operators
-                ineq = ''
-                ineqList = [i for i in '<>' if i in self.ignoreCond]
-                if len(ineqList)>0:
-                    ineq = ineqList[0]
-                # Default to less than, in case of 'r6'
-                elif not equal:
-                    ineq = '<'
-                print('rNum', self.ignoreCond, ineqList,once,self.ignoreCond[(1+len(ineqList)+once+equal):])
-                # Create list of the index of every die that meets that condition
-                # Find the comparison number
-                self.ignoreRoll = stringDie(self.ignoreCond[(1 + len(ineqList) + once + equal):])
-                rNum = self.ignoreRoll.total()
-
-                rrDie = [i for i, d in enumerate(v)
-                         if (d > rNum and ineq == '>') or (d == rNum and equal) or (d < rNum and ineq == '<')]
-                # rrDie = []
-                # for i, d in enumerate(v):
-                #     print('Big Roll:' ,d, ineq, rNum, equal, (d > rNum and ineq == '>'), (d == rNum and equal), (d < rNum and ineq == '<'))
-                #     if (d > rNum and ineq == '>') or (d == rNum and equal) or (d < rNum and ineq == '<'):
-                #         rrDie.append(i)
-                # If that list has any results, add to reroll list
-                if len(rrDie) > 0:
-                    self.rerollSubdice(*rrDie)
-
-                #check if the new rolls meet the conditions.
-                while not once and len(rrDie) > 0:
-                    v = [d.value for d in self.subdice[-len(rrDie):]]
-                    rrDie = [i for i, d in enumerate(v) if
-                             (d > rNum and ineq == '>') or (d == rNum and equal) or (d < rNum and ineq == '<')]
-                    offset = len(self.subdice)-len(rrDie)
-                    self.rerollSubdice(*rrDie, offset=offset)
-                    # self.explode(self.subdice[-len(exDie):], len(self.subdie)-len(exDie))
-                    # reapply roll criteria function. nested?
+                self.rerollDice(v)
 
             # Explode
             elif "e" in self.ignoreCond:
@@ -331,6 +306,51 @@ class stringDie:
 
                 # v[:kNum]
 
+    def rerollDice(self, v):
+        once = self.ignoreCond[1] == 'o'
+        equal = '=' in self.ignoreCond
+        offset = 0
+        # Check for greater or less than operators
+        ineq = ''
+        ineqList = [i for i in '<>' if i in self.ignoreCond]
+        if len(ineqList) > 0:
+            ineq = ineqList[0]
+        # Default to less than, in case of 'r6'
+        elif not equal:
+            ineq = '<'
+        # Create list of the index of every die that meets that condition
+        # Find the comparison number
+        self.ignoreRoll = stringDie(self.ignoreCond[(1 + len(ineqList) + once + equal):])
+        rNum = self.ignoreRoll.total()
+        # print('rNum:', rNum, self.ignoreCond, ineqList, once, self.ignoreCond[(1 + len(ineqList) + once + equal):])
+        # If that list has any results, add to reroll list
+        rrDie = [i for i, d in enumerate(v)
+                 if (d > rNum and ineq == '>') or (d == rNum and equal) or (d < rNum and ineq == '<')]
+        # rrDie = []
+        # for i, d in enumerate(v):
+        #     print('Big Roll:' ,d, ineq, rNum, equal, (d > rNum and ineq == '>'), (d == rNum and equal), (d < rNum and ineq == '<'))
+        #     if (d > rNum and ineq == '>') or (d == rNum and equal) or (d < rNum and ineq == '<'):
+        #         rrDie.append(i)
+        # print("Rerolled Indexes", rrDie)
+        # The
+        if once and len(rrDie) > 0:
+            self.rerollSubdice(*rrDie)
+        # check if the new rolls meet the conditions.
+        while not once and len(rrDie) > 0:
+            self.rerollSubdice(*rrDie)
+            v = [d.value for d in self.subdice[-len(rrDie):]]
+
+            rrDie = [i + len(self.subdice) - len(v) for i, d in enumerate(v) if
+                     (d > rNum and ineq == '>') or (d == rNum and equal) or (d < rNum and ineq == '<')]
+            # [print('%d: %d'%(i, d.value)) for i,d in enumerate(self.subdice)]
+            # print("Rerolled Indexes",v,rrDie)
+            # offset =
+            # rrDie = [i+offset for i in rrDie]
+            # print(len(rrDie),len(rrDie)>0)
+            # self.rerollSubdice(*rrDie, offset=offset)
+            # self.explode(self.subdice[-len(exDie):], len(self.subdie)-len(exDie))
+            # reapply roll criteria function. nested?
+
     def keepDrop(self, v):
         high = anyIsIn(self.ignoreCond, 'kh', 'dl')
         # Checking to see if the highest values are relevant.
@@ -339,7 +359,7 @@ class stringDie:
         self.ignoreRoll = stringDie(self.ignoreCond[2:])
         kNum = self.ignoreRoll.total()
         print('Keep Number:', kNum)
-        # If the ignore cond is to drop dice, then the
+        # If the "ignore cond" is to drop dice, then the
         if 'd' in self.ignoreCond[:2]:
             kNum = len(self.subdice) - kNum
         #                 Find indexes of the highest kNum results.
@@ -372,10 +392,14 @@ class stringDie:
         print('Exploding', v, eNum)
         exDie = [i for i, d in enumerate(v) if d >= eNum]
         # If that list has any results, reroll those die
-        if len(exDie) > 0:
-            self.rerollSubdice(*exDie, ignoreRerolled=False, offset=offset)
-            sd = [d.value for d in self.subdice[-len(exDie):]]
-            self.explodeDice(sd, len(self.subdice)-len(exDie))
+        while len(exDie) > 0:
+            self.rerollSubdice(*exDie, ignoreRerolled=False)
+            # v = [d.value for d in self.subdice[-len(v):]]
+            exDie = [i + len(self.subdice) - len(v)
+                     for i, d in enumerate(self.subdice[-len(v):])
+                     if d.value >= eNum]
+            # self.rerollSubdice(*exDie, ignoreRerolled=False, offset=offset)
+            self.rerollSubdice(*exDie, ignoreRerolled=False)
 
     def toDict(self):
         d = { k: self.__getattribute__(k) for k in list(self.__dict__.keys())}
@@ -395,33 +419,36 @@ def testDieString(s):
         dienum = s[br:]
     return s.isnumeric() and br != 0, diequant, dienum
 
+if testing:
+    test = [
+        "{2d20; 10}kh1",
+        "{2d20}+5",
+            "{6d20}kh2",
+        "{6d20}dh2",
+        "{6d20}kl2",
+        "{6d20}dl2",
+        "2d20-1d4","2d20kh1", "5",
+            "6*2d20", '2d10/2','6d4kh(1d4)',
+        '{100d100; 5d2000}kh1',
+        '4d6e3',
+        '5d6r<=5',
+        '5d6ro>=3',
+        '1d20+4>=10',
+        '2d20kh1+5>=10'
+    ]
+    l = []
+    for d in test:
+        s = stringDie(d)
+        s.total()
+        l.append(s)
+        print()
+    [print('Dice: %s=%s'%(s.value,s.valueString())) for s in l]
 
-# test = [
-#     # "{2d20; 10}kh1",
-#     # "{2d20}+5",
-# #     "{6d20}kh2",
-# # "{6d20}dh2",
-# # "{6d20}kl2",
-# # "{6d20}dl2",
-#     # "2d20-1d4","2d20kh1", "5",
-#     #     "6*2d20", '2d10/2','6d4kh(1d4)',
-#     # '{100d100; 5d2000}kh1',
-#     '4d6e5',
-#     '5d6r4',
-#     '5d6ro>=3',
-#     # '1d20+4>=10',
-#     # '2d20kh1+5>=10'
-# ]
-# for d in test:
-#     s = stringDie(d)
-#     s.total()
-#     print('Dice: %s=%s'%(s.value,s.valueString()))
-#     print()
-# k = stringDie(s)
-# k.dienum = 6
-# print(k.toDict())
-# print(s.toDict())
-# print(s.isInequ())
-# #
+    k = stringDie(s)
+    k.dienum = 6
+    print(k.toDict())
+    print(s.toDict())
+    print(s.isInequ())
+    #
 
-# # print(1*True, 1*False)
+    # print(1*True, 1*False)

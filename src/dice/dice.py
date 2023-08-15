@@ -12,48 +12,16 @@ from dice.stringDie import stringDie
 # from json_save.json_save import jsonRead, jsonWrite
 
 def jsonWrite(name, data):
-    # req_data = request.get_json()
-    filemane = 'Saved Files/{}.json'.format(name)
-    with open(filemane, 'w') as json_file:
-        # print(req_data)
-        # print(req_data['name'])
-        # print(jsonify(req_data))
+    filename = 'Saved Files/{}.json'.format(name)
+    with open(filename, 'w') as json_file:
         json.dump(data, json_file)
+
 def jsonRead(name):
-    # req_data = request.get_json()
     filename = 'Saved Files/{}.json'.format(name)
     with open(filename, 'r', encoding='utf-8') as json_file:
         data = json.load(json_file)
     return data
 
-
-class Dice(object):
-    def __init__(self, dice, reroll=[], highest=0, lowest=0):
-        print(dice, reroll, highest, lowest)
-        self.dice = dice
-        # self.diceType = diceType
-        # self.diceNum = diceNum
-        self.reroll = reroll
-        self.results = []
-        self.total = 0
-        self.range = [highest, lowest]
-
-    def rolls(self):
-        self.results = [self.roll() for _ in range(self.dice["diceNum"])]
-        # self.results.sort()
-        self.total = (
-            sum(
-                self.results[self.range[0] : -1 * self.range[1]]
-                if self.range[1] > 0
-                else self.results[self.range[0] :]
-            )
-            + self.dice["constant"]
-        )
-        return {"dice": self.dice, "rolls": self.results, "total": self.total}
-
-    def roll(self):
-        r = random.randint(1, self.dice["diceType"])
-        return r if r not in self.reroll else self.roll()
 
 class DiceHistory(object):
     def __init__(self):
@@ -68,9 +36,6 @@ class DiceHistory(object):
         d = {'die':dice.toDict(), 'id':id, 'result':dice.value}
         self.history[id] = d
         return id
-    
-    
-
 
 
 global_history = DiceHistory()
