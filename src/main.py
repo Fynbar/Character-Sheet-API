@@ -15,6 +15,8 @@ from json_save.json_save import SaveJSONAPI
 from dice.dice import DiceRoller, StringRoller
 from dice.stringDie import stringDie
 
+from tables.table import table, TableRoller
+
 
 
 
@@ -74,15 +76,24 @@ app.add_url_rule(
 # api.add_resource(Employees, "/employees")  # Route_1
 
 
-
+# Set Up DiceHistory API
 dice_view = DiceRoller.as_view("dice_view")
 
 app.add_url_rule("/diceHistory", view_func=dice_view, methods=["POST", "GET"])
 
+# Set Up Dice string API
 diestring_view = StringRoller.as_view("diestring_view")
 
-app.add_url_rule("/dice", view_func=diestring_view, methods=["POST", "GET","OPTIONS"])
-app.add_url_rule("/dice/<id>", view_func=diestring_view, methods=["POST", "GET","OPTIONS"])
+app.add_url_rule("/dice", view_func=diestring_view, methods=["POST", "GET", "OPTIONS"])
+app.add_url_rule("/dice/<id>", view_func=diestring_view, methods=["POST", "GET", "OPTIONS"])
+
+
+# Table API
+table_view = TableRoller.as_view("table_view")
+
+app.add_url_rule("/table", view_func=table_view, methods=["POST", "GET", "OPTIONS"])
+app.add_url_rule("/table/<id>", view_func=table_view, methods=["POST", "GET", "OPTIONS"])
+app.add_url_rule("/table/<id>/<roll>", view_func=table_view, methods=["POST", "GET", "OPTIONS"])
 
 def readJsonFile(filename):
     try:
