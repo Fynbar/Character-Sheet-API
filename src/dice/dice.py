@@ -49,13 +49,14 @@ class DiceRoller(MethodView):
         # console.log()
         req_data = request.get_json()
         print(req_data)
-        d = Dice(**req_data).rolls()
+        d = stringDie(**req_data).rolls()
         # global_history.history.append(d)
         return jsonify(d)
 
 
 class StringRoller(MethodView):
     def get(self, id=""):
+        print("StringRoller Get")
         # req_data = request.get_json()
         print(id)
         if id == "":
@@ -64,10 +65,12 @@ class StringRoller(MethodView):
             return jsonify(global_history.history.get(id))
 
     def options(self):
+        print("StringRoller Option")
         print("Option:", request.get_json())
         return jsonify(0)
+        
     def post(self):
-        # console.log()
+        print("StringRoller Post")
         req_data = request.get_json()
         if isinstance(req_data['string'], list):
             id = [global_history.rollDie(s) for s in req_data['string']]

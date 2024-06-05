@@ -15,7 +15,7 @@ from json_save.json_save import SaveJSONAPI
 from dice.dice import DiceRoller, StringRoller
 from dice.stringDie import stringDie
 
-from tables.table import table, TableRoller
+from tables.table import TableElement, TableRoller
 
 
 

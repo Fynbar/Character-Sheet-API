@@ -26,7 +26,6 @@ class stringDie:
             self.copyFromDie(s)
         # check for constants
         elif isinstance(s, dict):
-
             s = self.buildBase('+')
             for k in list(dict.keys()):
                 self.__setattr__(k, s[k])
@@ -35,6 +34,7 @@ class stringDie:
         elif s.isnumeric():
             s = self.buildBase(s)
             self.diequant = int(s)
+            self.constant = True
             print('Caught Constant early')
         else:
             s = self.buildBase(s)
@@ -106,6 +106,7 @@ class stringDie:
                     if s.isnumeric():
                         # print('%s is a constant ' % s)
                         print('Constant')
+                        self.constant = True
                         self.diequant = int(s)
                     else:
                         # print('%s is a standard die ' % s)
@@ -408,6 +409,10 @@ class stringDie:
             d['ignoreRoll'] = self.ignoreRoll.toDict()
         return d
 
+    def cleanDice (self):
+        # Filter through dice and delete unecessary 
+        pass
+
 def testDieString(s):
     # print("Testing", s)
     br = s.find('d')
@@ -423,12 +428,16 @@ if testing:
     test = [
         "{2d20; 10}kh1",
         "{2d20}+5",
-            "{6d20}kh2",
+        "{6d20}kh2",
         "{6d20}dh2",
         "{6d20}kl2",
         "{6d20}dl2",
-        "2d20-1d4","2d20kh1", "5",
-            "6*2d20", '2d10/2','6d4kh(1d4)',
+        "2d20-1d4",
+        "2d20kh1",
+        "5",
+        "6*2d20",
+        '2d10/2',
+        '6d4kh(1d4)',
         '{100d100; 5d2000}kh1',
         '4d6e3',
         '5d6r<=5',
