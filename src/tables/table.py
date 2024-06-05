@@ -4,7 +4,7 @@ from flask.views import MethodView
 # from .dice.stringDie import stringDie
 # Toggle Testing
 testing = True
-testing = False
+# testing = False
 T = TypeVar("T")
 
 
@@ -116,8 +116,8 @@ class TableElement:
             ' ',
             ';',
         ]
-        obr = '{('
-        cbr = '})'
+        obr = '{(['
+        cbr = '})]'
         o = []
         for a in [cbr, obr, rerolls, sym, inequ, 'd']:
             t = list(a)
@@ -180,7 +180,7 @@ class TableRoller(MethodView):
 
         print("Get ID", id)
         if id == "":
-        #     return jsonify(global_history.history)
+            pass# return jsonify(global_history.history)
         elif roll == "":
             retrun
         else:
