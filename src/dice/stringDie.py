@@ -32,11 +32,13 @@ class stringDie:
         elif isinstance(s, int):
             s = self.buildBase(str(s))
         elif s.isnumeric():
+
             s = self.buildBase(s)
             self.diequant = int(s)
             self.constant = True
             print('Caught Constant early')
         else:
+
             s = self.buildBase(s)
             slen = len(s)
             # Split by '+' and '-' and if none exist, '*' and '/'
@@ -154,9 +156,17 @@ class stringDie:
 
 
     def buildBase(self, s):
+        # Check if there's a name break
+        nameCheck = s.split("|")
+        # if len(nameCheck) <= 2:
+        self.name = nameCheck[0]
+        # If there's no name it will be set as the string
+        s = nameCheck[-1]
         s = s.replace(" ", "").lower()
         self.string = s
+
         self.diequant = 0
+        # The assumption is a constand of nD1's
         self.dienum = 1
         self.sign = '+'
         self.subdice = []
@@ -223,6 +233,9 @@ class stringDie:
                 for i, d in enumerate(self.subdice[1:]):
                     if self.ignore[i+1] == 1:
                         self.value *= d.value ** signDict[d.sign]
+            elif self.isComp():
+                self.value = sum(
+                    [self.ignore[i] * d.value for i, d in enumerate(self.subdice)])
             else:
                 self.value = sum([self.ignore[i] * d.value * signDict.get(d.sign,1) for i, d in enumerate(self.subdice)])
         else:
@@ -258,7 +271,7 @@ class stringDie:
         #     pass
         elif self.isComp():
             k = '; '.join([e.valueString() for e in self.subdice])
-            string += "{%s}" % k
+            string += "{%s}%s" % (k, self.ignore)
         else:
             for i, d in enumerate(self.subdice):
                 # Check if there's several die to put the block in parentheses
@@ -426,23 +439,23 @@ def testDieString(s):
 
 if testing:
     test = [
-        "{2d20; 10}kh1",
-        "{2d20}+5",
-        "{6d20}kh2",
-        "{6d20}dh2",
-        "{6d20}kl2",
-        "{6d20}dl2",
-        "2d20-1d4",
-        "2d20kh1",
-        "5",
-        "6*2d20",
-        '2d10/2',
-        '6d4kh(1d4)',
-        '{100d100; 5d2000}kh1',
-        '4d6e3',
-        '5d6r<=5',
-        '5d6ro>=3',
-        '1d20+4>=10',
+        "Highest Test|{2d20; 10}kh1",
+        "Curly Bracket Test|{2d20}+5",
+        "Keep Highest 2 Test|{6d20}kh2",
+        "Drop Highest 2 Test|{6d20}dh2",
+        "Keep Lowest 2 Test|{6d20}kl2",
+        "Drop Lowest 2 Test|{6d20}dl2",
+        "Keep Highest 2 Test|2d20-1d4",
+        "Standard Highest Test|2d20kh1",
+        "Constant Test|5",
+        "Multiplication Test|6*2d20",
+        'Division Test|2d10/2',
+        'Variable Keep Highest Test|6d4kh(1d4)',
+        'Semicolon split Test|{100d100; 5d2000}kh1',
+        'Exploding Test|4d6e3',
+        'Reroll Test|5d6r<=5',
+        'Reroll Once Test|5d6ro>=3',
+        'Inequality Test|1d20+4>=10',
         '2d20kh1+5>=10'
     ]
     l = []
@@ -451,7 +464,7 @@ if testing:
         s.total()
         l.append(s)
         print()
-    [print('Dice: %s=%s'%(s.value,s.valueString())) for s in l]
+    [print('%s Dice|%s: %s=%s'%(s.name, s.string, s.value,s.valueString())) for s in l]
 
     k = stringDie(s)
     k.dienum = 6
@@ -461,3 +474,9 @@ if testing:
     #
 
     # print(1*True, 1*False)
+    s = stringDie('Semicolon split Test|{100d100; 5d2000}kh1')
+    s.total()
+    j = s.toDict()
+    for k in j.keys():
+        print(k,": ",j[k])
+    print([l['value'] for l in j['subdice']])
